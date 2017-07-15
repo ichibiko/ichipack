@@ -61,9 +61,9 @@ EOF
     cd $TARGET_DIR
 
     if [ ! -e .git ]; then
-        find . -type d
+        find .
     else
-        find . -type d | while read fpath; do
+        find . | while read fpath; do
             if [ "$fpath" = "." ]; then
                 continue
             fi
@@ -79,39 +79,24 @@ EOF
         if [ -z "$fpath" ]; then
             continue
         fi
-        echo "mkdir \$WORKING_DIR/$fpath"
-    done
 
-    if [ ! -e .git ]; then
-        find . -type f
-    else
-        find . -type f | while read fpath; do
-            if expr "$fpath" : '^\./\.git' >/dev/null; then
-                continue
+        if [ -d $fpath ]; then
+            echo "mkdir \$WORKING_DIR/$fpath"
+        elif [ -f $fpath ]; then
+            hash=$(sha1sum $fpath | cut -b-40)
+
+            if [ $(grep '^' $fpath | wc -l) -eq $(cat $fpath | wc -l) ]; then
+                echo "cat <<\\EOF_$hash > \$WORKING_DIR/$fpath"
+                cat $fpath
+                echo "EOF_$hash"
+                echo
+            else
+                # 最後に改行がないファイル
+                echo "base64 -d <<\\EOF_$hash > \$WORKING_DIR/$fpath"
+                base64 $fpath
+                echo "EOF_$hash"
+                echo
             fi
-            if git check-ignore -q "$fpath"; then
-                continue
-            fi
-            echo "$fpath"
-        done
-    fi | cut -b3- | LC_ALL=C sort | while read fpath; do
-        if [ -z "$fpath" ]; then
-            continue
-        fi
-
-        hash=$(sha1sum $fpath | cut -b-40)
-
-        if [ $(grep '^' $fpath | wc -l) -eq $(cat $fpath | wc -l) ]; then
-            echo "cat <<\\EOF_$hash > \$WORKING_DIR/$fpath"
-            cat $fpath
-            echo "EOF_$hash"
-            echo
-        else
-            # 最後に改行がないファイル
-            echo "base64 -d <<\\EOF_$hash > \$WORKING_DIR/$fpath"
-            base64 $fpath
-            echo "EOF_$hash"
-            echo
         fi
     done
 )
