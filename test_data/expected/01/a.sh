@@ -20,6 +20,7 @@ trap "rm -rf $WORKING_DIR" EXIT
 
 ichipack_generate_targets() {
 mkdir etc
+
 sed 's/^  //' <<\EOF_ebee610aeea08f14165bfc526009d948074fbda0 > etc/data.txt
   data1
   data2

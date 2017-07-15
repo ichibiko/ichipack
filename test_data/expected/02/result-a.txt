@@ -1,3 +1,10 @@
 no new line
 at end of fileexists new line
 at end of file
+.
+./etc
+./etc/binary-1.dat
+./etc/binary-2.dat
+./etc/exists-lf.txt
+./etc/no-lf.txt
+./main.sh
