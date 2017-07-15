@@ -86,14 +86,14 @@ EOF
             hash=$(sha1sum $fpath | cut -b-40)
 
             if [ $(grep '^' $fpath | wc -l) -eq $(cat $fpath | wc -l) ]; then
-                echo "cat <<\\EOF_$hash > \$WORKING_DIR/$fpath"
-                cat $fpath
+                echo "sed 's/^  //' <<\\EOF_$hash > \$WORKING_DIR/$fpath"
+                sed 's/^/  /' $fpath
                 echo "EOF_$hash"
                 echo
             else
                 # 最後に改行がないファイル
-                echo "base64 -d <<\\EOF_$hash > \$WORKING_DIR/$fpath"
-                base64 $fpath
+                echo "sed 's/^  //'  <<\\EOF_$hash | base64 -d > \$WORKING_DIR/$fpath"
+                base64 $fpath | sed 's/^/  /'
                 echo "EOF_$hash"
                 echo
             fi
