@@ -2,13 +2,7 @@
 if [ ! -e .git ]; then
     find .
 else
-    find . | while read fpath; do
-        if [ "$fpath" = "." ]; then
-            continue
-        fi
-        if expr "$fpath" : '^\./\.git' >/dev/null; then
-            continue
-        fi
+    find . | grep -v -E '^\.($|/\.git$|/\.git/|/\.gitignore$)' | while read fpath; do
         if git check-ignore -q "$fpath"; then
             continue
         fi
