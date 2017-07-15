@@ -18,13 +18,14 @@ fi
 
 trap "rm -rf $WORKING_DIR" EXIT
 
-mkdir $WORKING_DIR/etc
-sed 's/^  //' <<\EOF_ebee610aeea08f14165bfc526009d948074fbda0 > $WORKING_DIR/etc/data.txt
+ichipack_generate_targets() {
+mkdir etc
+sed 's/^  //' <<\EOF_ebee610aeea08f14165bfc526009d948074fbda0 > etc/data.txt
   data1
   data2
 EOF_ebee610aeea08f14165bfc526009d948074fbda0
 
-sed 's/^  //' <<\EOF_7a68fbba1b87cf150c9cdfecf0641b259e87b6f2 > $WORKING_DIR/main.sh
+sed 's/^  //' <<\EOF_7a68fbba1b87cf150c9cdfecf0641b259e87b6f2 > main.sh
   
   echo "test"
   
@@ -32,6 +33,11 @@ sed 's/^  //' <<\EOF_7a68fbba1b87cf150c9cdfecf0641b259e87b6f2 > $WORKING_DIR/mai
   
 EOF_7a68fbba1b87cf150c9cdfecf0641b259e87b6f2
 
+}
+(
+    cd $WORKING_DIR
+    ichipack_generate_targets
+)
 
 echo "test"
 

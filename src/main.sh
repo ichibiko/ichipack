@@ -39,27 +39,15 @@ cat $WORKING_DIR/src/template-head.sh
 (
     cd $TARGET_DIR
 
-    sh $WORKING_DIR/src/ls-target.sh | while read fpath; do
-        if [ -d $fpath ]; then
-            echo "mkdir \$WORKING_DIR/$fpath"
-        elif [ -f $fpath ]; then
-            hash=$(sha1sum $fpath | cut -b-40)
-
-            if [ $(grep '^' $fpath | wc -l) -eq $(cat $fpath | wc -l) ]; then
-                echo "sed 's/^  //' <<\\EOF_$hash > \$WORKING_DIR/$fpath"
-                sed 's/^/  /' $fpath
-                echo "EOF_$hash"
-                echo
-            else
-                # 最後に改行がないファイル
-                echo "sed 's/^  //'  <<\\EOF_$hash | base64 -d > \$WORKING_DIR/$fpath"
-                base64 $fpath | sed 's/^/  /'
-                echo "EOF_$hash"
-                echo
-            fi
-        fi
-    done
+    echo "ichipack_generate_targets() {"
+    sh $WORKING_DIR/src/ls-target.sh | sh $WORKING_DIR/src/files-generator.sh
+    echo "}"
 )
+
+echo "("
+echo "    cd \$WORKING_DIR"
+echo "    ichipack_generate_targets"
+echo ")"
 
 cat $TARGET_DIR/main.sh
 
