@@ -23,6 +23,13 @@ if [ ! -e $TARGET_DIR/main.sh ]; then
     exit 1
 fi
 
+if [ -e $TARGET_DIR/.git ]; then
+    if ! which git >/dev/null; then
+        echo "git not found" >&2
+        exit 1
+    fi
+fi
+
 if [ -n "$OUTPUT_FILEPATH" ]; then
     exec > $OUTPUT_FILEPATH
 fi
@@ -49,6 +56,57 @@ fi
 trap "rm -rf $WORKING_DIR" EXIT
 
 EOF
+
+(
+    cd $TARGET_DIR
+
+    if [ ! -e .git ]; then
+        find . -type d
+    else
+        find . -type d | while read fpath; do
+            if [ "$fpath" = "." ]; then
+                continue
+            fi
+            if expr "$fpath" : '^\./\.git' >/dev/null; then
+                continue
+            fi
+            if git check-ignore -q "$fpath"; then
+                continue
+            fi
+            echo "$fpath"
+        done
+    fi | cut -b3- | LC_ALL=C sort | while read fpath; do
+        if [ -z "$fpath" ]; then
+            continue
+        fi
+        echo "mkdir \$WORKING_DIR/$fpath"
+    done
+
+    if [ ! -e .git ]; then
+        find . -type f
+    else
+        find . -type f | while read fpath; do
+            if expr "$fpath" : '^\./\.git' >/dev/null; then
+                continue
+            fi
+            if git check-ignore -q "$fpath"; then
+                continue
+            fi
+            echo "$fpath"
+        done
+    fi | cut -b3- | LC_ALL=C sort | while read fpath; do
+        if [ -z "$fpath" ]; then
+            continue
+        fi
+
+        # TODO 最後が改行でないファイルに未対応
+        hash=$(sha1sum $fpath | cut -b-40)
+        echo "cat <<\\EOF_$hash > \$WORKING_DIR/$fpath"
+        cat $fpath
+        echo "EOF_$hash"
+        echo
+    done
+)
 
 cat $TARGET_DIR/main.sh
 
