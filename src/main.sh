@@ -99,12 +99,20 @@ EOF
             continue
         fi
 
-        # TODO 最後が改行でないファイルに未対応
         hash=$(sha1sum $fpath | cut -b-40)
-        echo "cat <<\\EOF_$hash > \$WORKING_DIR/$fpath"
-        cat $fpath
-        echo "EOF_$hash"
-        echo
+
+        if [ $(grep '^' $fpath | wc -l) -eq $(cat $fpath | wc -l) ]; then
+            echo "cat <<\\EOF_$hash > \$WORKING_DIR/$fpath"
+            cat $fpath
+            echo "EOF_$hash"
+            echo
+        else
+            # 最後に改行がないファイル
+            echo "base64 -d <<\\EOF_$hash > \$WORKING_DIR/$fpath"
+            base64 $fpath
+            echo "EOF_$hash"
+            echo
+        fi
     done
 )
 
