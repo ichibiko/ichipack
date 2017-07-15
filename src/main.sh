@@ -23,7 +23,7 @@ if [ ! -e $TARGET_DIR/main.sh ]; then
     exit 1
 fi
 
-if [ -e $TARGET_DIR/.git ]; then
+if [ -e $TARGET_DIR/.git -o -e $TARGET_DIR/.ichipackignore ]; then
     if ! which git >/dev/null; then
         echo "git not found" >&2
         exit 1

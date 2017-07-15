@@ -1,5 +1,5 @@
 
-ichipack: src/* main.sh
+ichipack: src/* main.sh .ichipackignore
 	./src/ichipack -o var/ichipack.1
 	sh ./var/ichipack.1 -o var/ichipack.2
 	cp var/ichipack.2 ./ichipack
