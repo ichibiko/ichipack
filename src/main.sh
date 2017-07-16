@@ -87,6 +87,11 @@ echo 'PATH="$HARD_WORKING_DIR/.ichipack/bin:$PATH"'
 echo
 echo "####################################################################################################"
 
+(
+    cd $TARGET_DIR
+    perl $WORKING_DIR/src/switch-action.pl
+)
+
 cat $TARGET_DIR/main.sh
 
 if [ -z "$OPTION_SOURCE" ]; then
