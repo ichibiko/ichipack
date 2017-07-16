@@ -2,6 +2,7 @@
 
 TARGET_DIR=
 OUTPUT_FILEPATH=
+OPTION_SOURCE=1
 
 while [ $# -gt 0 ]; do
     if [ "$1" = "-d" ]; then
@@ -10,6 +11,10 @@ while [ $# -gt 0 ]; do
     elif [ "$1" = "-o" ]; then
         OUTPUT_FILEPATH=$2
         shift
+    elif [ "$1" = "--no-source" ]; then
+        OPTION_SOURCE=
+    elif [ "$1" = "--no-sources" ]; then
+        OPTION_SOURCE=
     fi
     shift
 done
@@ -34,13 +39,25 @@ if [ -n "$OUTPUT_FILEPATH" ]; then
     exec > $OUTPUT_FILEPATH
 fi
 
-cat $WORKING_DIR/src/template-head.sh
+if [ -n "$OPTION_SOURCE" ]; then
+    # 出力先を3に退避
+    exec 3>&1
+
+    # 出力先を一時ファイルにリダイレクト
+    exec > $WORKING_DIR/output.sh
+fi
+
+if [ -z "$OPTION_SOURCE" ]; then
+    cat $WORKING_DIR/src/template-head.sh
+    echo
+fi
 
 (
     cd $TARGET_DIR
 
     echo "ichipack_generate_targets() {"
-    sh $WORKING_DIR/src/ls-target.sh | sh $WORKING_DIR/src/files-generator.sh
+    sh $WORKING_DIR/src/ls-target.sh > $WORKING_DIR/targets.txt
+    cat $WORKING_DIR/targets.txt | sh $WORKING_DIR/src/files-generator.sh
     echo "}"
 )
 
@@ -53,4 +70,38 @@ echo "##########################################################################
 
 cat $TARGET_DIR/main.sh
 
+if [ -z "$OPTION_SOURCE" ]; then
+    echo "####################################################################################################"
+    exit
+fi
+
+# 出力先を本来の標準出力に戻す
+exec >&3
+
+output_hash=$(sha1sum $WORKING_DIR/output.sh | cut -b-40)
+
+cat $WORKING_DIR/src/template-head.sh
+echo
+cat $WORKING_DIR/src/template-head-sources.sh | sed "s/%%%%HASH%%%%/$output_hash/g"
+echo
+cat $WORKING_DIR/output.sh
+echo
+echo "exit"
 echo "####################################################################################################"
+echo "#$output_hash"
+
+(
+    cd $TARGET_DIR
+
+    (
+        cat $WORKING_DIR/targets.txt
+        sh $WORKING_DIR/src/ls-source.sh
+    ) | LC_ALL=C sort | LC_ALL=C uniq | while read fpath; do
+        if [ -f $fpath ]; then
+            echo "$fpath"
+        fi
+    done > $WORKING_DIR/sources.txt
+    tar cz --to-stdout --files-from $WORKING_DIR/sources.txt | cat
+)
+
+
