@@ -49,38 +49,38 @@ fi
 
 (
 
-(
-    cd $TARGET_DIR
+    (
+        cd $TARGET_DIR
 
-    echo "ichipack_generate_targets() {"
-    sh $WORKING_DIR/src/ls-target.sh > $WORKING_DIR/targets.txt
-    cat $WORKING_DIR/targets.txt | sh $WORKING_DIR/src/files-generator.sh
-    echo "}"
-)
+        echo "ichipack_generate_targets() {"
+        sh $WORKING_DIR/src/ls-target.sh > $WORKING_DIR/targets.txt
+        cat $WORKING_DIR/targets.txt | sh $WORKING_DIR/src/files-generator.sh
+        echo "}"
+    )
 
-echo "("
-echo "    cd \$WORKING_DIR"
-echo "    ichipack_generate_targets"
-echo ")"
-echo
-echo "####################################################################################################"
-echo
-echo "("
-echo "    cd \$HARD_WORKING_DIR"
-echo
-sh $WORKING_DIR/src/meta-files-generator.sh $OPTION_SELF_BUILD $OPTION_BIN_ICHIPACK
-echo
-echo ")"
-echo 'PATH="$HARD_WORKING_DIR/.ichipack/bin:$PATH"'
-echo
-echo "####################################################################################################"
+    echo "("
+    echo "    cd \$WORKING_DIR"
+    echo "    ichipack_generate_targets"
+    echo ")"
+    echo
+    echo "####################################################################################################"
+    echo
+    echo "("
+    echo "    cd \$HARD_WORKING_DIR"
+    echo
+    sh $WORKING_DIR/src/meta-files-generator.sh $OPTION_SELF_BUILD $OPTION_BIN_ICHIPACK
+    echo
+    echo ")"
+    echo 'PATH="$HARD_WORKING_DIR/.ichipack/bin:$PATH"'
+    echo
+    echo "####################################################################################################"
 
-(
-    cd $TARGET_DIR
-    perl $WORKING_DIR/src/switch-action.pl
-)
+    (
+        cd $TARGET_DIR
+        perl $WORKING_DIR/src/switch-action.pl
+    )
 
-cat $TARGET_DIR/main.sh
+    cat $TARGET_DIR/main.sh
 
 ) > $WORKING_DIR/output.sh
 
@@ -93,34 +93,34 @@ if [ -z "$OPTION_SOURCE" ]; then
     cat $WORKING_DIR/output.sh
 
     echo "####################################################################################################"
-    exit
-fi
 
-output_hash=$(sha1sum $WORKING_DIR/output.sh | cut -b-40)
+else
+    output_hash=$(sha1sum $WORKING_DIR/output.sh | cut -b-40)
 
-cat $WORKING_DIR/src/template-head.sh
-cat $WORKING_DIR/src/template-head-func.sh
-echo
-cat $WORKING_DIR/src/template-head-sources.sh | sed "s/%%%%HASH%%%%/$output_hash/g"
-echo
-cat $WORKING_DIR/output.sh
-echo
-echo "exit"
-echo "####################################################################################################"
-echo "#$output_hash"
-
-(
-    cd $TARGET_DIR
+    cat $WORKING_DIR/src/template-head.sh
+    cat $WORKING_DIR/src/template-head-func.sh
+    echo
+    cat $WORKING_DIR/src/template-head-sources.sh | sed "s/%%%%HASH%%%%/$output_hash/g"
+    echo
+    cat $WORKING_DIR/output.sh
+    echo
+    echo "exit"
+    echo "####################################################################################################"
+    echo "#$output_hash"
 
     (
-        cat $WORKING_DIR/targets.txt
-        sh $WORKING_DIR/src/ls-source.sh
-    ) | LC_ALL=C sort | LC_ALL=C uniq | while read fpath; do
-        if [ -f $fpath ]; then
-            echo "$fpath"
-        fi
-    done > $WORKING_DIR/sources.txt
-    tar cz --to-stdout --files-from $WORKING_DIR/sources.txt | cat
-)
+        cd $TARGET_DIR
 
+        (
+            cat $WORKING_DIR/targets.txt
+            sh $WORKING_DIR/src/ls-source.sh
+        ) | LC_ALL=C sort | LC_ALL=C uniq | while read fpath; do
+            if [ -f $fpath ]; then
+                echo "$fpath"
+            fi
+        done > $WORKING_DIR/sources.txt
+        tar cz --to-stdout --files-from $WORKING_DIR/sources.txt | cat
+    )
+
+fi
 
