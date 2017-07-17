@@ -47,19 +47,7 @@ if [ -n "$OUTPUT_FILEPATH" ]; then
     exec > $OUTPUT_FILEPATH
 fi
 
-if [ -n "$OPTION_SOURCE" ]; then
-    # 出力先を3に退避
-    exec 3>&1
-
-    # 出力先を一時ファイルにリダイレクト
-    exec > $WORKING_DIR/output.sh
-fi
-
-if [ -z "$OPTION_SOURCE" ]; then
-    cat $WORKING_DIR/src/template-head.sh
-    cat $WORKING_DIR/src/template-head-func.sh
-    echo
-fi
+(
 
 (
     cd $TARGET_DIR
@@ -94,13 +82,19 @@ echo "##########################################################################
 
 cat $TARGET_DIR/main.sh
 
+) > $WORKING_DIR/output.sh
+
 if [ -z "$OPTION_SOURCE" ]; then
+
+    cat $WORKING_DIR/src/template-head.sh
+    cat $WORKING_DIR/src/template-head-func.sh
+    echo
+
+    cat $WORKING_DIR/output.sh
+
     echo "####################################################################################################"
     exit
 fi
-
-# 出力先を本来の標準出力に戻す
-exec >&3
 
 output_hash=$(sha1sum $WORKING_DIR/output.sh | cut -b-40)
 
