@@ -10,6 +10,7 @@ WORKING_DIR
 ./etc/exists-lf.txt
 ./etc/no-lf.txt
 ./main.sh
+./test_perm
 
 HARD_WORKING_DIR
 .
