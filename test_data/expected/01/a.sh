@@ -38,6 +38,26 @@ fi
 
 ####################################################################################################
 
+_ichipack_read_real_path() {
+    local cwd="$(pwd)"
+    local path="$1"
+
+    while [ -n "$path" ]; do
+        if [ "${path%/*}" != "$path" ]; then
+            cd "${path%/*}"
+        fi
+        local name="${path##*/}"
+        path="$(readlink "$name" || true)"
+    done
+
+    echo $(pwd)/$name
+    cd "$cwd"
+}
+
+_ICHIPACK_SCRIPT_PATH="$(_ichipack_read_real_path $0)"
+
+####################################################################################################
+
 ichipack_generate_targets() {
 mkdir etc
 
@@ -59,6 +79,17 @@ EOF_7a68fbba1b87cf150c9cdfecf0641b259e87b6f2
     cd $WORKING_DIR
     ichipack_generate_targets
 )
+
+####################################################################################################
+
+(
+    cd $HARD_WORKING_DIR
+
+    mkdir -p .ichipack/bin
+
+
+)
+PATH="$HARD_WORKING_DIR/.ichipack/bin:$PATH"
 
 ####################################################################################################
 

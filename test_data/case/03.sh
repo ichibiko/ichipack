@@ -5,8 +5,8 @@ mkdir -p test_data/case/03/.git
 echo c > test_data/case/03/etc/c.txt
 echo d > test_data/case/03/etc/d.txt
 
-echo ./ichipack -d test_data/case/03 -o var/test/tmp/03/a.sh
-./ichipack -d test_data/case/03 -o var/test/tmp/03/a.sh || exit $?
+echo ./ichipack -d test_data/case/03 --no-bin-ichipack -o var/test/tmp/03/a.sh
+./ichipack -d test_data/case/03 --no-bin-ichipack -o var/test/tmp/03/a.sh || exit $?
 
 echo sh var/test/tmp/03/a.sh \> var/test/actual/03/result-a.txt
 sh var/test/tmp/03/a.sh > var/test/actual/03/result-a.txt || exit $?

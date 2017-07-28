@@ -1,6 +1,8 @@
 no new line
 at end of fileexists new line
 at end of file
+
+WORKING_DIR
 .
 ./etc
 ./etc/binary-1.dat
@@ -8,3 +10,9 @@ at end of file
 ./etc/exists-lf.txt
 ./etc/no-lf.txt
 ./main.sh
+
+HARD_WORKING_DIR
+.
+./.ichipack
+./.ichipack/bin
+./.ichipack/bin/ichipack

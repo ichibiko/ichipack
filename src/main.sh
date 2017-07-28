@@ -2,6 +2,8 @@
 
 TARGET_DIR=
 OUTPUT_FILEPATH=
+OPTION_SELF_BUILD=
+OPTION_BIN_ICHIPACK="--bin-ichipack"
 OPTION_SOURCE=1
 
 while [ $# -gt 0 ]; do
@@ -11,6 +13,12 @@ while [ $# -gt 0 ]; do
     elif [ "$1" = "-o" ]; then
         OUTPUT_FILEPATH=$2
         shift
+    elif [ "$1" = "--self-build" ]; then
+        OPTION_SELF_BUILD=$1
+    elif [ "$1" = "--bin-ichipack" ]; then
+        OPTION_BIN_ICHIPACK=$1
+    elif [ "$1" = "--no-bin-ichipack" ]; then
+        OPTION_BIN_ICHIPACK=
     elif [ "$1" = "--no-source" ]; then
         OPTION_SOURCE=
     elif [ "$1" = "--no-sources" ]; then
@@ -49,6 +57,7 @@ fi
 
 if [ -z "$OPTION_SOURCE" ]; then
     cat $WORKING_DIR/src/template-head.sh
+    cat $WORKING_DIR/src/template-head-func.sh
     echo
 fi
 
@@ -67,6 +76,16 @@ echo "    ichipack_generate_targets"
 echo ")"
 echo
 echo "####################################################################################################"
+echo
+echo "("
+echo "    cd \$HARD_WORKING_DIR"
+echo
+sh $WORKING_DIR/src/meta-files-generator.sh $OPTION_SELF_BUILD $OPTION_BIN_ICHIPACK
+echo
+echo ")"
+echo 'PATH="$HARD_WORKING_DIR/.ichipack/bin:$PATH"'
+echo
+echo "####################################################################################################"
 
 cat $TARGET_DIR/main.sh
 
@@ -81,6 +100,7 @@ exec >&3
 output_hash=$(sha1sum $WORKING_DIR/output.sh | cut -b-40)
 
 cat $WORKING_DIR/src/template-head.sh
+cat $WORKING_DIR/src/template-head-func.sh
 echo
 cat $WORKING_DIR/src/template-head-sources.sh | sed "s/%%%%HASH%%%%/$output_hash/g"
 echo
