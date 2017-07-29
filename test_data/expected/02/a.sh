@@ -2,6 +2,19 @@
 
 ####################################################################################################
 
+_ICHIPACK_CLEAN=1
+
+while [ $# -gt 0 ]; do
+    if [ "$1" = "--ichipack-no-clean" ]; then
+        _ICHIPACK_CLEAN=
+        shift
+    else
+        break
+    fi
+done
+
+####################################################################################################
+
 if [ -z "$UID" ]; then
     UID=$(id -u)
 fi
@@ -16,7 +29,12 @@ else
     export HARD_WORKING_DIR=$(mktemp -d /tmp/ichipack-hard-XXXXXXXX)
 fi
 
-trap "rm -rf $WORKING_DIR $HARD_WORKING_DIR" EXIT
+if [ -n "$_ICHIPACK_CLEAN" ]; then
+    trap "rm -rf $WORKING_DIR $HARD_WORKING_DIR" EXIT
+else
+    echo "WORKING_DIR:      $WORKING_DIR" >&2
+    echo "HARD_WORKING_DIR: $HARD_WORKING_DIR" >&2
+fi
 
 ####################################################################################################
 
