@@ -66,12 +66,12 @@ fi
     echo "####################################################################################################"
     echo
     echo "("
-    echo "    cd \$HARD_WORKING_DIR"
+    echo "    cd \$WORKING_DIR"
     echo
     sh $WORKING_DIR/src/meta-files-generator.sh $OPTION_SELF_BUILD $OPTION_BIN_ICHIPACK
     echo
     echo ")"
-    echo 'PATH="$HARD_WORKING_DIR/.ichipack/bin:$PATH"'
+    echo 'PATH="$WORKING_DIR/.ichipack/bin:$PATH"'
     echo
     echo "####################################################################################################"
 

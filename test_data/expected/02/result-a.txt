@@ -9,11 +9,11 @@ WORKING_DIR
 ./etc/binary-2.dat
 ./etc/exists-lf.txt
 ./etc/no-lf.txt
+./.ichipack
+./.ichipack/bin
+./.ichipack/bin/ichipack
 ./main.sh
 ./test_perm
 
 HARD_WORKING_DIR
 .
-./.ichipack
-./.ichipack/bin
-./.ichipack/bin/ichipack

@@ -83,13 +83,13 @@ EOF_7a68fbba1b87cf150c9cdfecf0641b259e87b6f2
 ####################################################################################################
 
 (
-    cd $HARD_WORKING_DIR
+    cd $WORKING_DIR
 
     mkdir -p .ichipack/bin
 
 
 )
-PATH="$HARD_WORKING_DIR/.ichipack/bin:$PATH"
+PATH="$WORKING_DIR/.ichipack/bin:$PATH"
 
 ####################################################################################################
 
