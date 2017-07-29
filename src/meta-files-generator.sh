@@ -16,7 +16,7 @@ echo
 
 if [ -n "$OPTION_BIN_ICHIPACK" ]; then
     if [ -z "$OPTION_SELF_BUILD" ]; then
-        sh $WORKING_DIR/src/file-writer.sh $_ICHIPACK_SCRIPT_PATH .ichipack/bin/ichipack
+        sh $WORKING_DIR/src/file-writer.sh --perm $_ICHIPACK_SCRIPT_PATH .ichipack/bin/ichipack
         echo "chmod 700 .ichipack/bin/ichipack"
     else
         # ichipackセルフビルド

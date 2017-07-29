@@ -1,9 +1,29 @@
 
-fpath=$1
-target=$2
+fpath=
+target=
+OPTION_PERM=
+
+while [ $# -gt 0 ]; do
+    if [ "$1" = "--perm" ]; then
+        OPTION_PERM=$1
+    elif [ -z "$fpath" ]; then
+        fpath=$1
+    elif [ -z "$target" ]; then
+        target=$1
+    fi
+    shift
+done
 
 hash=$(sha1sum $fpath | cut -b-40)
 charset=$(file -b --mime-encoding $fpath)
+
+if [ -n "$OPTION_PERM" ]; then
+    target_ln="$target"
+    target="\$HOME/.ichipack/file-$hash"
+    echo "mkdir -p \$HOME/.ichipack"
+    echo "chmod 700 \$HOME/.ichipack"
+    echo "if [ ! -e \"$target\" ]; then"
+fi
 
 if [ \( "$charset" = "us-ascii" -o "$charset" = "utf-8" \) -a $(grep '^' $fpath | wc -l) -eq $(cat $fpath | wc -l) ]; then
     echo "sed 's/^  //' <<\\EOF_$hash > $target"
@@ -29,4 +49,10 @@ else
         echo "EOF_$hash"
         echo
     fi
+fi
+
+if [ -n "$OPTION_PERM" ]; then
+    echo "fi"
+    echo "touch $target.touch"
+    echo "ln -s $target $target_ln"
 fi
