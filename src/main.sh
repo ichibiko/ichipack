@@ -35,10 +35,12 @@ if [ -z "$TARGET_DIR" ]; then
     TARGET_DIR=.
 fi
 
+mkdir -p $WORKING_DIR/var
+
 if [ -f "$TARGET_DIR" ]; then
-    mkdir $WORKING_DIR/target
-    cp $TARGET_DIR $WORKING_DIR/target/main.sh
-    TARGET_DIR=$WORKING_DIR/target
+    mkdir $WORKING_DIR/var/target
+    cp $TARGET_DIR $WORKING_DIR/var/target/main.sh
+    TARGET_DIR=$WORKING_DIR/var/target
 fi
 
 if [ ! -e $TARGET_DIR/main.sh ]; then
@@ -61,8 +63,8 @@ export SEPARATOR=$(head -c 100 /dev/zero | sed -e 's/\x00/#/g')
         cd $TARGET_DIR
 
         echo "ichipack_generate_targets() {"
-        sh $WORKING_DIR/src/ls-target.sh > $WORKING_DIR/targets.txt
-        cat $WORKING_DIR/targets.txt | sh $WORKING_DIR/src/files-generator.sh
+        sh $WORKING_DIR/src/ls-target.sh > $WORKING_DIR/var/targets.txt
+        cat $WORKING_DIR/var/targets.txt | sh $WORKING_DIR/src/files-generator.sh
         echo "}"
     )
 
@@ -88,7 +90,7 @@ export SEPARATOR=$(head -c 100 /dev/zero | sed -e 's/\x00/#/g')
         perl $WORKING_DIR/src/switch-action.pl
     )
 
-) > $WORKING_DIR/output.sh
+) > $WORKING_DIR/var/output.sh
 
 if [ -z "$OPTION_SOURCE" ]; then
     (
@@ -96,12 +98,12 @@ if [ -z "$OPTION_SOURCE" ]; then
         cat $WORKING_DIR/src/template-head-func.sh
         echo
 
-        cat $WORKING_DIR/output.sh
+        cat $WORKING_DIR/var/output.sh
 
         echo $SEPARATOR
     ) > $OUTPUT_FILEPATH
 else
-    output_hash=$(sha1sum $WORKING_DIR/output.sh | cut -b-40)
+    output_hash=$(sha1sum $WORKING_DIR/var/output.sh | cut -b-40)
 
     (
         cat $WORKING_DIR/src/template-head.sh
@@ -109,7 +111,7 @@ else
         echo
         cat $WORKING_DIR/src/template-head-sources.sh | sed "s/%%%%HASH%%%%/$output_hash/g"
         echo
-        cat $WORKING_DIR/output.sh
+        cat $WORKING_DIR/var/output.sh
         echo
         echo "exit $?"
         echo $SEPARATOR
@@ -119,14 +121,14 @@ else
             cd $TARGET_DIR
 
             (
-                cat $WORKING_DIR/targets.txt
+                cat $WORKING_DIR/var/targets.txt
                 sh $WORKING_DIR/src/ls-source.sh
             ) | LC_ALL=C sort | LC_ALL=C uniq | while read fpath; do
                 if [ -f $fpath ]; then
                     echo "$fpath"
                 fi
-            done > $WORKING_DIR/sources.txt
-            tar cz --to-stdout --files-from $WORKING_DIR/sources.txt | cat
+            done > $WORKING_DIR/var/sources.txt
+            tar cz --to-stdout --files-from $WORKING_DIR/var/sources.txt | cat
         )
     ) > $OUTPUT_FILEPATH
 fi
