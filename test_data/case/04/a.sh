@@ -1,1 +1,1 @@
-echo TEST
+echo "TEST '$1' '$2'"

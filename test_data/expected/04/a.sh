@@ -59,9 +59,9 @@ _ICHIPACK_SCRIPT_PATH="$(_ichipack_read_real_path $0)"
 ####################################################################################################
 
 ichipack_generate_targets() {
-sed 's/^  //' <<\EOF_0e60cad36414051c5936b14e6be769c62930cbbc > main.sh
-  echo TEST
-EOF_0e60cad36414051c5936b14e6be769c62930cbbc
+sed 's/^  //' <<\EOF_b6ba53ca81a5645939cff3c53f865c1e2f481c7e > main.sh
+  echo "TEST '$1' '$2'"
+EOF_b6ba53ca81a5645939cff3c53f865c1e2f481c7e
 
 }
 (

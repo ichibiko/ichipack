@@ -2,6 +2,7 @@
 
 TARGET_DIR=
 OUTPUT_FILEPATH=/dev/stdout
+OPTION_EXEC=
 OPTION_SELF_BUILD=
 OPTION_BIN_ICHIPACK="--bin-ichipack"
 OPTION_SOURCE="--source"
@@ -13,6 +14,8 @@ while [ $# -gt 0 ]; do
     elif [ "$1" = "-o" ]; then
         OUTPUT_FILEPATH=$2
         shift
+    elif [ "$1" = "--exec" ]; then
+        OPTION_EXEC=$1
     elif [ "$1" = "--self-build" ]; then
         OPTION_SELF_BUILD=$1
     elif [ "$1" = "--bin-ichipack" ]; then
@@ -27,6 +30,9 @@ while [ $# -gt 0 ]; do
         OPTION_SOURCE=
     elif [ "$1" = "--no-sources" ]; then
         OPTION_SOURCE=
+    elif [ "$1" = "--" ]; then
+        shift
+        break
     fi
     shift
 done
@@ -53,6 +59,11 @@ if [ -e $TARGET_DIR/.git -o -e $TARGET_DIR/.ichipackignore ]; then
         echo "git not found" >&2
         exit 1
     fi
+fi
+
+if [ -n "$OPTION_EXEC" ]; then
+    OUTPUT_FILEPATH=
+    OPTION_SOURCE=
 fi
 
 export SEPARATOR=$(head -c 100 /dev/zero | sed -e 's/\x00/#/g')
@@ -91,6 +102,10 @@ export SEPARATOR=$(head -c 100 /dev/zero | sed -e 's/\x00/#/g')
     )
 
 ) > $WORKING_DIR/var/output.sh
+
+if [ -n "$OPTION_EXEC" ]; then
+    OUTPUT_FILEPATH=$WORKING_DIR/var/exec.sh
+fi
 
 if [ -z "$OPTION_SOURCE" ]; then
     (
@@ -131,5 +146,9 @@ else
             tar cz --to-stdout --files-from $WORKING_DIR/var/sources.txt | cat
         )
     ) > $OUTPUT_FILEPATH
+fi
+
+if [ -n "$OPTION_EXEC" ]; then
+    sh $OUTPUT_FILEPATH "$@"
 fi
 
