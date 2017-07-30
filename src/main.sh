@@ -53,6 +53,8 @@ if [ -e $TARGET_DIR/.git -o -e $TARGET_DIR/.ichipackignore ]; then
     fi
 fi
 
+export SEPARATOR=$(head -c 100 /dev/zero | sed -e 's/\x00/#/g')
+
 (
 
     (
@@ -69,7 +71,7 @@ fi
     echo "    ichipack_generate_targets"
     echo ")"
     echo
-    echo "####################################################################################################"
+    echo $SEPARATOR
     echo
     echo "("
     echo "    cd \$WORKING_DIR"
@@ -79,7 +81,7 @@ fi
     echo ")"
     echo 'PATH="$WORKING_DIR/.ichipack/bin:$PATH"'
     echo
-    echo "####################################################################################################"
+    echo $SEPARATOR
 
     (
         cd $TARGET_DIR
@@ -96,7 +98,7 @@ if [ -z "$OPTION_SOURCE" ]; then
 
         cat $WORKING_DIR/output.sh
 
-        echo "####################################################################################################"
+        echo $SEPARATOR
     ) > $OUTPUT_FILEPATH
 else
     output_hash=$(sha1sum $WORKING_DIR/output.sh | cut -b-40)
@@ -110,7 +112,7 @@ else
         cat $WORKING_DIR/output.sh
         echo
         echo "exit $?"
-        echo "####################################################################################################"
+        echo $SEPARATOR
         echo "#$output_hash"
 
         (
