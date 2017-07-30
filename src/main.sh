@@ -86,8 +86,6 @@ fi
         perl $WORKING_DIR/src/switch-action.pl
     )
 
-    cat $TARGET_DIR/main.sh
-
 ) > $WORKING_DIR/output.sh
 
 if [ -z "$OPTION_SOURCE" ]; then
@@ -111,7 +109,7 @@ else
         echo
         cat $WORKING_DIR/output.sh
         echo
-        echo "exit"
+        echo "exit $?"
         echo "####################################################################################################"
         echo "#$output_hash"
 

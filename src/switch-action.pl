@@ -17,12 +17,15 @@ foreach my $f (@files) {
     }
     print "    ICHIPACK_ACTION=\$1\n";
 }
-unless ($first) {
+if ($first) {
+    print ". \$WORKING_DIR/main.sh\n";
+} else {
     print "fi\n";
     print "if [ -n \"\$ICHIPACK_ACTION\" ]; then\n";
     print "    shift\n";
-    print "    sh \$WORKING_DIR/main-\$ICHIPACK_ACTION.sh \"\$\@\"\n";
-    print "    exit \$?\n";
+    print "    . \$WORKING_DIR/main-\$ICHIPACK_ACTION.sh\n";
+    print "else\n";
+    print "    . \$WORKING_DIR/main.sh\n";
     print "fi\n";
 }
 
