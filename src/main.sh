@@ -35,6 +35,12 @@ if [ -z "$TARGET_DIR" ]; then
     TARGET_DIR=.
 fi
 
+if [ -f "$TARGET_DIR" ]; then
+    mkdir $WORKING_DIR/target
+    cp $TARGET_DIR $WORKING_DIR/target/main.sh
+    TARGET_DIR=$WORKING_DIR/target
+fi
+
 if [ ! -e $TARGET_DIR/main.sh ]; then
     echo "Not found: $TARGET_DIR/main.sh" >&2
     exit 1
