@@ -2,6 +2,7 @@
 TARGET_DIR=
 OUTPUT_FILEPATH=/dev/stdout
 OPTION_EXEC=
+OPTION_INSTANT=
 OPTION_SELF_BUILD=
 OPTION_BIN_ICHIPACK="--bin-ichipack"
 OPTION_SOURCE="--source"
@@ -15,6 +16,10 @@ while [ $# -gt 0 ]; do
         shift
     elif [ "$1" = "--exec" ]; then
         OPTION_EXEC=$1
+    elif [ "$1" = "--instant" ]; then
+        OPTION_INSTANT=$1
+        # シェルスクリプトの先頭に以下の行を書いて使う
+        # exec ichipack --exec --instant -d "$0" -- "$@"
     elif [ "$1" = "--self-build" ]; then
         OPTION_SELF_BUILD=$1
     elif [ "$1" = "--bin-ichipack" ]; then
@@ -36,6 +41,11 @@ while [ $# -gt 0 ]; do
     shift
 done
 
+if [ -n "$OPTION_INSTANT" -a ! -f $TARGET_DIR ]; then
+    echo "`--instant` specified but $TARGET_DIR is not a file" >&2
+    exit 1
+fi
+
 if [ -z "$TARGET_DIR" ]; then
     TARGET_DIR=.
 fi
@@ -44,7 +54,11 @@ mkdir -p $WORKING_DIR/var
 
 if [ -f "$TARGET_DIR" ]; then
     mkdir $WORKING_DIR/var/target
-    cp $TARGET_DIR $WORKING_DIR/var/target/main.sh
+    if [ -n "$OPTION_INSTANT" ]; then
+        cat $TARGET_DIR | perl $WORKING_DIR/src/filter-main.pl > $WORKING_DIR/var/target/main.sh
+    else
+        cp $TARGET_DIR $WORKING_DIR/var/target/main.sh
+    fi
     TARGET_DIR=$WORKING_DIR/var/target
 fi
 
