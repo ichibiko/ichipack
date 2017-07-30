@@ -19,10 +19,11 @@ charset=$(file -b --mime-encoding $fpath)
 
 if [ -n "$OPTION_PERM" ]; then
     target_ln="$target"
-    target="\$HOME/.ichipack/file-$hash"
-    echo "mkdir -p \$HOME/.ichipack"
+    target="\$HOME/.ichipack/file-$hash/content"
+    echo "mkdir -p \$HOME/.ichipack/file-$hash"
     echo "chmod 700 \$HOME/.ichipack"
     echo "if [ ! -e \"$target\" ]; then"
+    echo "    touch \$HOME/.ichipack/file-$hash/create.touch"
 fi
 
 if [ \( "$charset" = "us-ascii" -o "$charset" = "utf-8" \) -a $(grep '^' $fpath | wc -l) -eq $(cat $fpath | wc -l) ]; then
@@ -53,6 +54,6 @@ fi
 
 if [ -n "$OPTION_PERM" ]; then
     echo "fi"
-    echo "touch $target.touch"
+    echo "touch \$HOME/.ichipack/file-$hash/use.touch"
     echo "ln -s $target $target_ln"
 fi

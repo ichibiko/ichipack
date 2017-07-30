@@ -12,6 +12,8 @@ WORKING_DIR
 ./.ichipack
 ./.ichipack/bin
 ./.ichipack/bin/ichipack
+./.ichipack/create.touch
+./.ichipack/use.touch
 ./main.sh
 ./test_perm
 

@@ -26,6 +26,10 @@ else
     export HARD_WORKING_DIR=$(mktemp -d /tmp/ichipack-hard-XXXXXXXX)
 fi
 
+mkdir $WORKING_DIR/.ichipack
+touch $WORKING_DIR/.ichipack/create.touch
+touch $WORKING_DIR/.ichipack/use.touch
+
 if [ -n "$_ICHIPACK_CLEAN" ]; then
     trap "rm -rf $WORKING_DIR $HARD_WORKING_DIR" EXIT
 else

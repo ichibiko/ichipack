@@ -31,8 +31,11 @@ if [ -e $TARGET_DIR ]; then
 fi
 
 PERM_DIR=$HOME/.ichipack/perm-$PERM_UUID
-mkdir -p $PERM_DIR
-touch $PERM_DIR.touch
+if [ ! -e $PERM_DIR/.ichipack ]; then
+    mkdir -p $PERM_DIR/.ichipack
+    touch $PERM_DIR/.ichipack/create.touch
+fi
+touch $PERM_DIR/.ichipack/use.touch
 chmod 700 $HOME/.ichipack
 mkdir -p $(dirname $TARGET_DIR)
 ln -s $PERM_DIR $TARGET_DIR
