@@ -1,4 +1,3 @@
-#!/bin/sh
 
 TARGET_DIR=
 OUTPUT_FILEPATH=/dev/stdout
@@ -74,8 +73,8 @@ export SEPARATOR=$(head -c 100 /dev/zero | sed -e 's/\x00/#/g')
         cd $TARGET_DIR
 
         echo "ichipack_generate_targets() {"
-        sh $WORKING_DIR/src/ls-target.sh > $WORKING_DIR/var/targets.txt
-        cat $WORKING_DIR/var/targets.txt | sh $WORKING_DIR/src/files-generator.sh
+        bash $WORKING_DIR/src/ls-target.sh > $WORKING_DIR/var/targets.txt
+        cat $WORKING_DIR/var/targets.txt | bash $WORKING_DIR/src/files-generator.sh
         echo "}"
     )
 
@@ -89,7 +88,7 @@ export SEPARATOR=$(head -c 100 /dev/zero | sed -e 's/\x00/#/g')
     echo "("
     echo "    cd \$WORKING_DIR"
     echo
-    sh $WORKING_DIR/src/meta-files-generator.sh $OPTION_SELF_BUILD $OPTION_BIN_ICHIPACK
+    bash $WORKING_DIR/src/meta-files-generator.sh $OPTION_SELF_BUILD $OPTION_BIN_ICHIPACK
     echo
     echo ")"
     echo 'PATH="$WORKING_DIR/.ichipack/bin:$PATH"'
@@ -109,6 +108,9 @@ fi
 
 if [ -z "$OPTION_SOURCE" ]; then
     (
+        echo "#!/bin/bash"
+        echo
+        echo $SEPARATOR
         cat $WORKING_DIR/src/template-head.sh
         cat $WORKING_DIR/src/template-head-func.sh
         echo
@@ -121,6 +123,9 @@ else
     output_hash=$(sha1sum $WORKING_DIR/var/output.sh | cut -b-40)
 
     (
+        echo "#!/bin/bash"
+        echo
+        echo $SEPARATOR
         cat $WORKING_DIR/src/template-head.sh
         cat $WORKING_DIR/src/template-head-func.sh
         echo
@@ -137,7 +142,7 @@ else
 
             (
                 cat $WORKING_DIR/var/targets.txt
-                sh $WORKING_DIR/src/ls-source.sh
+                bash $WORKING_DIR/src/ls-source.sh
             ) | LC_ALL=C sort | LC_ALL=C uniq | while read fpath; do
                 if [ -f $fpath ]; then
                     echo "$fpath"
@@ -149,6 +154,6 @@ else
 fi
 
 if [ -n "$OPTION_EXEC" ]; then
-    sh $OUTPUT_FILEPATH "$@"
+    bash $OUTPUT_FILEPATH "$@"
 fi
 
