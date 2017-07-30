@@ -1,7 +1,13 @@
 
+build: ichipack ichipack.no-source
+
 ichipack: var/ichipack.2.with-sources
 	cp var/ichipack.2.with-sources ./ichipack
 	chmod 775 ichipack
+
+ichipack.no-source: var/ichipack.2
+	cp var/ichipack.2 ./ichipack.no-source
+	chmod 775 ichipack.no-source
 
 var/ichipack.1: src/* main.sh main-*.sh .ichipackignore
 	./src/ichipack --no-source --self-build -o var/ichipack.1
