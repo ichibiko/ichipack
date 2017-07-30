@@ -63,11 +63,17 @@ _ICHIPACK_SCRIPT_PATH="$(_ichipack_read_real_path $0)"
 ####################################################################################################
 
 ichipack_generate_targets() {
-sed 's/^  //' <<\EOF_2638402bf032ad3960fac535e49c25868863a6fe > main.sh
+sed 's/^  //' <<\EOF_0094413a37b8d8788a890c696de4cf79c0b091b2 > main.sh
   
   echo "TEST '$1' '$2'"
   
-EOF_2638402bf032ad3960fac535e49c25868863a6fe
+  cat $WORKING_DIR/data.txt
+  
+EOF_0094413a37b8d8788a890c696de4cf79c0b091b2
+
+sed 's/^  //' <<\EOF_4e1243bd22c66e76c2ba9eddc1f91394e57f9f83 > data.txt
+  test
+EOF_4e1243bd22c66e76c2ba9eddc1f91394e57f9f83
 
 }
 (

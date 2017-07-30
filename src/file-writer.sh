@@ -14,6 +14,11 @@ while [ $# -gt 0 ]; do
     shift
 done
 
+if [ "$fpath" = "-" ]; then
+    fpath=$WORKING_DIR/var/file
+    cat > $fpath
+fi
+
 hash=$(sha1sum $fpath | cut -b-40)
 charset=$(file -b --mime-encoding $fpath)
 

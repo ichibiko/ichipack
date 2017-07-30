@@ -3,6 +3,7 @@ TARGET_DIR=
 OUTPUT_FILEPATH=/dev/stdout
 OPTION_EXEC=
 OPTION_INSTANT=
+OPTION_MULTI=
 OPTION_SELF_BUILD=
 OPTION_BIN_ICHIPACK="--bin-ichipack"
 OPTION_SOURCE="--source"
@@ -20,6 +21,8 @@ while [ $# -gt 0 ]; do
         OPTION_INSTANT=$1
         # シェルスクリプトの先頭に以下の行を書いて使う
         # exec ichipack --exec --instant -d "$0" -- "$@"
+    elif [ "$1" = "--multi" ]; then
+        OPTION_MULTI=$1
     elif [ "$1" = "--self-build" ]; then
         OPTION_SELF_BUILD=$1
     elif [ "$1" = "--bin-ichipack" ]; then
@@ -88,7 +91,12 @@ export SEPARATOR=$(head -c 100 /dev/zero | sed -e 's/\x00/#/g')
 
         echo "ichipack_generate_targets() {"
         bash $WORKING_DIR/src/ls-target.sh > $WORKING_DIR/var/targets.txt
-        cat $WORKING_DIR/var/targets.txt | bash $WORKING_DIR/src/files-generator.sh
+        cat $WORKING_DIR/var/targets.txt | . $WORKING_DIR/src/files-generator.sh
+
+        if [ -n "$OPTION_MULTI" ]; then
+            cat main.sh | perl $WORKING_DIR/src/multi-content-files-generator.pl
+        fi
+
         echo "}"
     )
 

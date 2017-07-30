@@ -2,7 +2,9 @@
 mkdir $WORKING_DIR/generator
 
 while read fpath; do
-    if [ -d $fpath ]; then
+    if [ -n "$OPTION_MULTI" -a "$fpath" = "main.sh" ]; then
+        : # ignore main.sh
+    elif [ -d $fpath ]; then
         echo "mkdir $fpath"
         echo
     elif [ -f $fpath ]; then
