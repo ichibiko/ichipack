@@ -4,7 +4,7 @@ TARGET_DIR=
 OUTPUT_FILEPATH=
 OPTION_SELF_BUILD=
 OPTION_BIN_ICHIPACK="--bin-ichipack"
-OPTION_SOURCE=1
+OPTION_SOURCE="--source"
 
 while [ $# -gt 0 ]; do
     if [ "$1" = "-d" ]; then
@@ -19,6 +19,10 @@ while [ $# -gt 0 ]; do
         OPTION_BIN_ICHIPACK=$1
     elif [ "$1" = "--no-bin-ichipack" ]; then
         OPTION_BIN_ICHIPACK=
+    elif [ "$1" = "--source" ]; then
+        OPTION_SOURCE=$1
+    elif [ "$1" = "--sources" ]; then
+        OPTION_SOURCE="--source"
     elif [ "$1" = "--no-source" ]; then
         OPTION_SOURCE=
     elif [ "$1" = "--no-sources" ]; then
